@@ -14,10 +14,13 @@ def get_books_by_author(author_name):
     return []
 
 def get_books_in_library(library_name):
-    library = Library.objects.filter(name=library_name).first()
-    if library:
+    try:
+        library = Library.objects.get(name=library_name)  # Using get() instead of filter().first()
         return [book.title for book in library.books.all()]
-    return []
+    except Library.DoesNotExist:
+        return "Library not found"
+
+
 
 def get_librarian_for_library(library_name):
     library = Library.objects.filter(name=library_name).first()
