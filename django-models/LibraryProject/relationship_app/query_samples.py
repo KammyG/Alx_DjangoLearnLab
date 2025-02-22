@@ -25,11 +25,15 @@ def get_books_in_library(library_name):
 
 
 def get_librarian_for_library(library_name):
-    library = Library.objects.filter(name=library_name).first()
-    if library:
-        librarian = Librarian.objects.filter(library=library).first()
-        return librarian.name if librarian else "No librarian assigned"
-    return "Library not found"
+    try:
+        library = Library.objects.get(name=library_name)
+        librarian = Librarian.objects.get(library=library)
+        return librarian.name
+    except Library.DoesNotExist:
+        return "Library not found"
+    except Librarian.DoesNotExist:
+        return "No librarian assigned"
+
 
 if __name__ == "__main__":
     print("Books by 'J.K. Rowling':", get_books_by_author("J.K. Rowling"))
