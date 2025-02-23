@@ -6,6 +6,8 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import  UserCreationForm
 from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.models import User
+from django import forms
 
 
 def home(request):
@@ -16,7 +18,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect("list_books")  # Redirect to book list or home page
+            return redirect("login")  # Redirect to book list or home page
     else:
         form = UserCreationForm()
     return render(request, "relationship_app/register.html", {"form": form})
