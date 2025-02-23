@@ -1,30 +1,31 @@
-from .models import Library
-from django.shortcuts import render
-from django.views.generic.detail import DetailView
-from .models import Book, Library
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
-from django.contrib.auth.forms import  UserCreationForm, AuthenticationForm
-from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
+from django.views.generic.detail import DetailView
+from .models import Book, Library
 from django import forms
 
 
+# Home View
 def home(request):
-    return render(request, 'relationship_app/home.html')
+    return render(request, "relationship_app/home.html")
 
+# Register View
 def register(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)  # Automatically log in the user after registration
-            return redirect("home")  # Redirect to the home page or another page
+            return redirect("home")  # Redirect to home or another page
     else:
         form = UserCreationForm()
     
-    return render(request, "register.html", {"form": form})
+    return render(request, "relationship_app/register.html", {"form": form})  # FIXED TEMPLATE PATH
 
+# Login View
 def user_login(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
@@ -35,25 +36,25 @@ def user_login(request):
     else:
         form = AuthenticationForm()
     
-    return render(request, "login.html", {"form": form})
+    return render(request, "relationship_app/login.html", {"form": form})  # FIXED TEMPLATE PATH
 
+# Logout View
 def user_logout(request):
     logout(request)
-    return redirect("home")  # Redirect to home after logout
+    return redirect("login")  # Redirect to login page after logout
 
-
-# Custom Login View
+# Class-Based Login View
 class CustomLoginView(LoginView):
     template_name = "relationship_app/login.html"
 
-# Custom Logout View
+# Class-Based Logout View
 class CustomLogoutView(LogoutView):
     template_name = "relationship_app/logout.html"
 
 # Function-Based View to List All Books
 def list_books(request):
     books = Book.objects.all()
-    return render(request, 'relationship_app/list_books.html', {'books': books})
+    return render(request, "relationship_app/list_books.html", {"books": books})
 
 # Class-Based View for Library Details
 class LibraryDetailView(DetailView):
