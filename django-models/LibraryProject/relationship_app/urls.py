@@ -1,23 +1,18 @@
 from django.urls import path
 from . import views
-from .views import list_books, LibraryDetailView
-from .views import register, CustomLoginView, CustomLogoutView
-from .views import register, user_login, user_logout
 
 urlpatterns = [
-    path("register/", register, name="register"),
-    path("login/", CustomLoginView.as_view(), name="login"),
-    path("logout/", CustomLogoutView.as_view(), name="logout"),
+    # Authentication URLs (Choose Either CustomLoginView or user_login)
+    path("register/", views.register, name="register"),
+    path("login/", views.user_login, name="login"),  # Using function-based login
+    path("logout/", views.user_logout, name="logout"),
 
-    path("register/", register, name="register"),
-    path("login/", user_login, name="login"),
-    path("logout/", user_logout, name="logout"),
+    # Homepage
+    path("", views.home, name="home"),
 
-    
-    path('', views.home, name='home'),  # Homepage URL
-    path('books/', views.list_books, name='list_books'),
+    # Books List
+    path("books/", views.list_books, name="list_books"),
 
-    path('books/', views.list_books, name='list_books'),
-    path('library/<int:pk>/', views.LibraryDetailView.as_view(), name='library_detail'),
+    # Library Detail View
+    path("library/<int:pk>/", views.LibraryDetailView.as_view(), name="library_detail"),
 ]
-
