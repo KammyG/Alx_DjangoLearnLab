@@ -1,23 +1,28 @@
 from django.urls import path
-from . import views
+from .views import (
+    home, register, user_login, user_logout, list_books, add_book, edit_book, delete_book,
+    admin_view, librarian_view, member_view, LibraryDetailView
+)
 from django.contrib.auth.views import LoginView, LogoutView
-from .views import admin_view, librarian_view, member_view
-
 
 urlpatterns = [
-    path("register/", views.register, name="register"),
-    path("login/", LoginView.as_view(template_name="relationship_app/login.html"), name="login"),
-    path("logout/", LogoutView.as_view(template_name="relationship_app/logout.html"), name="logout"),
+    # Authentication
+    path('', home, name='home'),
+    path('register/', register, name='register'),
+    path('login/', LoginView.as_view(template_name="relationship_app/login.html"), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
 
-    path('', views.home, name='home'),  
-    path('books/', views.list_books, name='list_books'),
-    path('library/<int:pk>/', views.LibraryDetailView.as_view(), name='library_detail'),
+    # Role-Based Views
+    path('admin-view/', admin_view, name='admin_view'),
+    path('librarian-view/', librarian_view, name='librarian_view'),
+    path('member-view/', member_view, name='member_view'),
 
-    path("admin-view/", admin_view, name="admin_view"),
-    path("librarian-view/", librarian_view, name="librarian_view"),
-    path("member-view/", member_view, name="member_view"),
-    
-    path("books/add/", views.add_book, name="add_book"),
-    path("books/edit/<int:book_id>/", views.edit_book, name="edit_book"),
-    path("books/delete/<int:book_id>/", views.delete_book, name="delete_book"),
+    # Book Management
+    path('books/', list_books, name='list_books'),
+    path('add_book/', add_book, name='add_book'),  
+    path('edit_book/<int:book_id>/', edit_book, name='edit_book'),  
+    path('delete_book/<int:book_id>/', delete_book, name='delete_book'),  
+
+    # Library Details
+    path('library/<int:pk>/', LibraryDetailView.as_view(), name='library_detail'),
 ]
