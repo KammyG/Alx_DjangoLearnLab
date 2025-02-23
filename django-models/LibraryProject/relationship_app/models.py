@@ -17,7 +17,6 @@ class UserProfile(models.Model):
         return f"{self.user.username} - {self.role}"
 
 
-
 class Author(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
@@ -25,16 +24,25 @@ class Author(models.Model):
     def __str__(self):
         return self.name
 
+
 class Book(models.Model):
     title = models.CharField(max_length=255)
-    author = models.CharField(max_length=255)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)  # Link to Author model
     published_date = models.DateField(default=now)
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)  # Allow NULL values
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)  
     isbn = models.CharField(max_length=13, unique=True)  
-    genre = models.CharField(max_length=100) 
+    genre = models.CharField(max_length=100)  
+
+    class Meta:
+        permissions = [
+            ("can_add_book", "Can add a new book"),
+            ("can_edit_book", "Can edit book details"),
+            ("can_delete_book", "Can delete a book"),
+        ]
 
     def __str__(self):
         return self.title
+
 
 class Library(models.Model):
     name = models.CharField(max_length=200)
@@ -42,6 +50,7 @@ class Library(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Librarian(models.Model):
     name = models.CharField(max_length=200)
