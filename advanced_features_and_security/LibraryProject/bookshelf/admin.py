@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Book
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from django.contrib.auth.models import Group, Permission
+from .models import Book, CustomUser
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
@@ -29,4 +29,10 @@ class CustomUserAdmin(UserAdmin):
 
     ordering = ["email"]  # Fix: Set ordering to "email" instead of "username"
 
+# Register the CustomUser model
 admin.site.register(CustomUser, CustomUserAdmin)
+
+# Manage Groups and Permissions in Admin
+admin.site.unregister(Group)  # Unregister default Group model
+admin.site.register(Group)  # Re-register to allow custom management
+admin.site.register(Permission)  # Register Permission model for fine-grained access control
