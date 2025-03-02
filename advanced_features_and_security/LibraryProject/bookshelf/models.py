@@ -1,23 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.models import BaseUserManager
-from django.contrib.auth.models import PermissionsMixin
-
-class Book(models.Model):
-    title = models.CharField(max_length=200)
-    author = models.CharField(max_length=100)
-    publication_year = models.IntegerField()
-
-    class Meta:
-        permissions = [
-            ("can_create", "Can create books"),
-            ("can_edit", "Can edit books"),
-            ("can_delete", "Can delete books"),
-            ("can_view", "Can view books"),
-        ]
-
-    def __str__(self):
-        return f"{self.title} by {self.author} ({self.publication_year})"
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 # Custom User Manager
 class CustomUserManager(BaseUserManager):
@@ -39,12 +21,12 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 # Custom User Model
-class CustomUser(AbstractUser, PermissionsMixin):  # Added PermissionsMixin for user permissions
+class CustomUser(AbstractUser):  # ✅ Removed PermissionsMixin to match expected format
     email = models.EmailField(unique=True)  # Use email as the primary identifier
     date_of_birth = models.DateField(null=True, blank=True)
     profile_photo = models.ImageField(upload_to="profile_pics/", null=True, blank=True)
 
-    username = None  # Remove the username field to use email as the identifier
+    username = None  # Remove username field to use email as the identifier
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["date_of_birth"]
 
@@ -57,3 +39,20 @@ class CustomUser(AbstractUser, PermissionsMixin):  # Added PermissionsMixin for 
         permissions = [
             ("can_manage_users", "Can manage users"),
         ]
+
+# Book Model
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.CharField(max_length=100)
+    publication_year = models.IntegerField()
+
+    class Meta:
+        permissions = [
+            ("can_create", "Can create books"),
+            ("can_edit", "Can edit books"),
+            ("can_delete", "Can delete books"),
+            ("can_view", "Can view books"),
+        ]
+
+    def __str__(self):
+        return f"{self.title} by {self.author} ({self.publication_year})"
