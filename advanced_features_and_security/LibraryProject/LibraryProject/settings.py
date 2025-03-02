@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'relationship_app',
     'bookshelf',
     'csp',  # Content Security Policy Middleware
+    'django_extensions', 
 ]
 
 MIDDLEWARE = [
@@ -110,6 +111,15 @@ AUTH_USER_MODEL = "bookshelf.CustomUser"
 
 # ========== SECURITY ENHANCEMENTS ========== #
 
+# Enforce HTTPS Redirects
+SECURE_SSL_REDIRECT = True  # Redirect all HTTP requests to HTTPS
+
+# HTTP Strict Transport Security (HSTS) Settings
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply HSTS to subdomains
+SECURE_HSTS_PRELOAD = True  # Allow browsers to preload HSTS
+
+
 # 🔒 Secure HTTP Headers
 SECURE_BROWSER_XSS_FILTER = True  # Prevents XSS attacks
 SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME-type sniffing
@@ -121,6 +131,8 @@ SESSION_COOKIE_SECURE = True  # Prevent session hijacking (Only HTTPS)
 CSRF_COOKIE_SECURE = True  # Prevent CSRF attacks (Only HTTPS)
 CSRF_COOKIE_HTTPONLY = True  # Prevent JavaScript from accessing CSRF cookie
 SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript from accessing session cookie
+
+
 
 # 🔒 CSRF Protection
 CSRF_TRUSTED_ORIGINS = ['https://yourdomain.com']
