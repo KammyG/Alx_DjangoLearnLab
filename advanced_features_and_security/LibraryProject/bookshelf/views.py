@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Book
 from .forms import BookForm
+from .forms import ExampleForm
+
 
 # View to list books (accessible to all logged-in users)
 @login_required
