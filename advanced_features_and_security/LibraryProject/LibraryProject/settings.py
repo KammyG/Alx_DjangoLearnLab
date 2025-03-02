@@ -11,27 +11,28 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file (Best practice for storing secrets)
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# SECURITY WARNING: Keep the secret key secret in production!
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback-secret-key") # Load from environment
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+# SECURITY WARNING: Don't run with debug turned on in production!
+DEBUG = False  # Disable Debug in Production
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-nq1k6x#po9=6!7#q=01^+p1%a0le6*yb8lpt=l%+fo%=jb2+32'
+ALLOWED_HOSTS = ['yourdomain.com', '127.0.0.1', 'localhost']  # Set allowed hosts
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-LOGIN_REDIRECT_URL = "home"  # Redirect to home page after login
-LOGOUT_REDIRECT_URL = "home"  # Redirect to home page after logout
-
+# Redirect to home page after login/logout
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "home"
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,17 +42,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'relationship_app',
     'bookshelf',
+    'csp',  # Content Security Policy Middleware
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'csp.middleware.CSPMiddleware',  # Add CSP Middleware
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.common.BrokenLinkEmailsMiddleware',  # Moved below CommonMiddleware
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'LibraryProject.urls'
 
@@ -73,10 +78,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'LibraryProject.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+# Database Configuration
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -84,46 +86,55 @@ DATABASES = {
     }
 }
 
-
 # Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = 'static/'
+# Static Files
+STATIC_URL = '/static/'
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "bookshelf.CustomUser"
+
+# ========== SECURITY ENHANCEMENTS ========== #
+
+# 🔒 Secure HTTP Headers
+SECURE_BROWSER_XSS_FILTER = True  # Prevents XSS attacks
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME-type sniffing
+X_FRAME_OPTIONS = 'DENY'  # Prevent Clickjacking attacks
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
+# 🔒 Secure Cookies
+SESSION_COOKIE_SECURE = True  # Prevent session hijacking (Only HTTPS)
+CSRF_COOKIE_SECURE = True  # Prevent CSRF attacks (Only HTTPS)
+CSRF_COOKIE_HTTPONLY = True  # Prevent JavaScript from accessing CSRF cookie
+SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript from accessing session cookie
+
+# 🔒 CSRF Protection
+CSRF_TRUSTED_ORIGINS = ['https://yourdomain.com']
+
+# 🔒 HTTP Strict Transport Security (HSTS) - **Enable only in production**
+SECURE_HSTS_SECONDS = 31536000  # 1 Year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# 🔒 Content Security Policy (CSP) - Mitigates XSS Attacks
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'")  # Remove `'unsafe-inline'` if not needed
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")  # Remove `'unsafe-inline'` if not needed
+CSP_IMG_SRC = ("'self'", "data:")
+CSP_FONT_SRC = ("'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com")
+
+# ========== END SECURITY ENHANCEMENTS ========== #
