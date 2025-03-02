@@ -110,6 +110,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "bookshelf.CustomUser"
 
 # ========== SECURITY ENHANCEMENTS ========== #
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 
 # Enforce HTTPS Redirects
 SECURE_SSL_REDIRECT = True  # Redirect all HTTP requests to HTTPS
