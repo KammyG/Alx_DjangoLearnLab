@@ -51,3 +51,18 @@ A Django-based blog application with user authentication, including registration
 2. Create a feature branch.
 3. Commit and push changes.
 4. Open a pull request.
+
+
+
+This Django blog project allows users to create, view, update, and delete blog posts.
+
+## Features
+- **User Authentication**: Login, Logout, Register
+- **CRUD Operations for Blog Posts**
+- **Permissions**: Only authors can edit/delete their posts
+- **Styled HTML Templates**
+
+## Installation
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/KammyG/Alx_DjangoLearnLab.git
