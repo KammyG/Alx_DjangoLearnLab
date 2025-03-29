@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'accounts',
+    'posts',
+    'notifications',
 ]
 AUTH_USER_MODEL = 'accounts.CustomUser'
 REST_FRAMEWORK = {
