@@ -1,8 +1,8 @@
 from rest_framework import viewsets, permissions, generics
+from rest_framework import filters
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
-from rest_framework import filters
-from .models import Post
+from accounts.models import CustomUser  # Explicitly importing CustomUser
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-created_at')
@@ -27,5 +27,7 @@ class UserFeedView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+        """Get posts from followed users, ordered by creation date."""
         user = self.request.user
-        return Post.objects.filter(author__in=user.following.all()).order_by('-created_at')
+        following_users = user.following.all()  # Get all users the current user follows
+        return Post.objects.filter(author__in=following_users).order_by('-created_at')  # Ensure exact check
