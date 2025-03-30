@@ -6,9 +6,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'your-default-secret-key')
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = False  
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost 127.0.0.1').split()
+ALLOWED_HOSTS = ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -23,22 +24,20 @@ INSTALLED_APPS = [
     'accounts',
     'posts',
     'notifications',
-    'whitenoise.runserver_nostatic',  # Enable Whitenoise for static file handling
+    'whitenoise.runserver_nostatic',  # Whitenoise for static file handling
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
-# Django REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
 
-# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Whitenoise for static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ Handles static files efficiently
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -47,10 +46,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# URL Configuration
 ROOT_URLCONF = 'social_media_api.urls'
 
-# Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -67,30 +64,32 @@ TEMPLATES = [
     },
 ]
 
-# WSGI Application
 WSGI_APPLICATION = 'social_media_api.wsgi.application'
 
-# Database Configuration
 DATABASES = {
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL', 'sqlite:///db.sqlite3'))
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'social_media_db',
+        'USER': 'social_media_user',
+        'PASSWORD': 'Mmohana189##',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
 }
 
-# Security Settings
+
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'True') == 'True'
+SECURE_SSL_REDIRECT = True  
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
-# Internationalization
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_TZ = True
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
